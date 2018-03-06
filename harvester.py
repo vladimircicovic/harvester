@@ -112,8 +112,6 @@ if __name__ == '__main__':
   if len(sys.argv) < 2:
         print("Usage: python ", sys.argv[0], " http[s]://URL_WITH_CSV")
         print("Example:\n python " + sys.argv[0], "https://raw.githubusercontent.com/bryangruneberg/gsm-assessment-data/master/kafka.csv")
-
-
         sys.exit(0)
   
   url = sys.argv[1]
