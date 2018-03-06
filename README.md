@@ -20,7 +20,7 @@ pythone harvester.py  https://some/urls/txt.cvs
 ```
 
 If everthing goes ok there would be bunch of png files with one output.html.
-This is simple version missing:
+This simple version missing:
 - output html file naming
 - directory output
 - verification if files are ok (png and html)
