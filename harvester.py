@@ -3,9 +3,11 @@ import shutil
 import sys
 
 reqs = []
+list_pictures_url = []
+
 agent_win_os = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
 header = {'User-Agent': agent_win_os}
-list_pictures_url = []
+
 
 def harvest_urls(response,**kwargs):
     status_code = response.status_code
