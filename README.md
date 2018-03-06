@@ -9,7 +9,7 @@ Move to dir with py app
 ```
 cd harvester/
 ```
-Install library need for running app:
+Install library requirment for running app:
 ```
 pip install -r requirements.txt
 ```
