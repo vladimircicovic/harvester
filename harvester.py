@@ -33,6 +33,8 @@ def save_pictures(name, response, url):
         with open(filename_save_name, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
         del response
+    else:
+        print("Could not save: ", filename_save_name)
 
 
 def download_pictures(response, **kwargs):
