@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.6
 import sys
 import shutil
 import grequests
@@ -12,6 +13,7 @@ EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
               'gsm-assessment-data/master/kafka.csv'
 
 # pylint: disable=missing-docstring,unused-argument
+
 
 
 def harvest_urls(response, **kwargs):
@@ -32,13 +34,14 @@ def save_pictures(name, response, url):
         shutil.copyfileobj(response.raw, out_file)
     del response
 
+
 def download_pictures(response, **kwargs):
     name = str(response.request.url).split("=")[1]
     if response.status_code == 200:
-       save_pictures(name, response, response.request.url)
+        save_pictures(name, response, response.request.url)
     else:
-        print("Could not save: ", name ,".png"\
-              " - error with url: ", response.status_code )
+        print("Could not save: ", name, ".png"
+              " - error with url: ", response.status_code)
 
 
 def create_list_of_names(list_urls, extension):
@@ -70,7 +73,7 @@ def infinite_looper(objects):
 def create_html(list_of_pic_urls):
     list_of_names = create_list_of_names(list_of_pic_urls, ".png")
 
-    table_data = "\n".join('<td><img src=\''+ pic +
+    table_data = "\n".join('<td><img src=\'' + pic +
                            '\'></td>' for pic in list_of_names)
     table = table_data.split('\n')
 
@@ -79,7 +82,7 @@ def create_html(list_of_pic_urls):
     html = "<table>\n"
     for i in range(0, max_elements, 4):
         html = html + "<tr>\n"
-        for j in range(0, min(4,max_elements-i)):
+        for _ in range(0, min(4, max_elements-i)):
             html = html + table_generator.__next__() + "\n"
 
         html = html + "</tr>\n"
