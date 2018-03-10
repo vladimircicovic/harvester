@@ -45,10 +45,10 @@ def download_pictures(response, **kwargs):
               " http url: ", response.request.url)
 
 
-def create_list_of_names(list_urls, extension):
+def create_list_of_names(list_urls):
     for url in list_urls:
         if '=' in url:
-            yield url.split("=")[1] + extension
+            yield url.split("=")[1]
 
 
 def save_html(html_output):
@@ -72,11 +72,12 @@ def infinite_looper(objects):
 
 
 def create_html(list_of_pic_urls):
-    list_of_names = create_list_of_names(list_of_pic_urls, ".png")
 
-    table_data = "\n".join('<td><img src=\'' + pic +
-                           '\'></td>' for pic in list_of_names)
-    table = table_data.split('\n')
+    picture_extension = ".png"
+
+    table = []
+    for picture_name in create_list_of_names(list_of_pic_urls):
+        table.append("<td><img src='" + picture_name + picture_extension + "\'></td>")
 
     max_elements = len(table)
     table_generator = infinite_looper(table)
