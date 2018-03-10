@@ -28,24 +28,23 @@ def harvest_urls(response, **kwargs):
 
 def save_pictures(name, response, url):
     filename_save_name = name + ".png"
-
-    if response.status_code == 200:
-        with open(filename_save_name, 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
-        del response
-    else:
-        print("Could not save: ", filename_save_name)
-
+    with open(filename_save_name, 'wb') as out_file:
+        shutil.copyfileobj(response.raw, out_file)
+    del response
 
 def download_pictures(response, **kwargs):
     name = str(response.request.url).split("=")[1]
-    save_pictures(name, response, response.request.url)
+    if response.status_code == 200:
+       save_pictures(name, response, response.request.url)
+    else:
+        print("Could not save: ", name ,".png"\
+              " - error with url: ", response.status_code )
 
 
-def create_list_of_names(list_urls, extenstion):
+def create_list_of_names(list_urls, extension):
     for url in list_urls:
         if '=' in url:
-            yield url.split("=")[1] + extenstion
+            yield url.split("=")[1] + extension
 
 
 def save_html(html_output):
@@ -71,29 +70,26 @@ def infinite_looper(objects):
 def create_html(list_of_pic_urls):
     list_of_names = create_list_of_names(list_of_pic_urls, ".png")
 
-    html = "<table>\n"
-
-    table_data = "\n".join('<td><img src=\''+pic +
+    table_data = "\n".join('<td><img src=\''+ pic +
                            '\'></td>' for pic in list_of_names)
     table = table_data.split('\n')
+
     max_elements = len(table)
     table_generator = infinite_looper(table)
+    html = "<table>\n"
     for i in range(0, max_elements, 4):
-        html += "<tr>\n"
-        for j in range(0, 4):
-            if j+i < max_elements:
-                html += table_generator.__next__() + "\n"
+        html = html + "<tr>\n"
+        for j in range(0, min(4,max_elements-i)):
+            html = html + table_generator.__next__() + "\n"
 
-        if i < max_elements:
-            html += "</tr>\n"
+        html = html + "</tr>\n"
 
-    html += "</table>\n"
+    html = html + "</table>\n"
     save_html(html)
 
 
 def exception_handler(request, exception):
-    print('Grequests Exception on: ' + str(exception))
-    print('We are closing app!!')
+    print('Exception on: ' + str(exception) + " for url: " + request.url)
     sys.exit(-1)
 
 
@@ -121,6 +117,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     URL_FROM_ARGUMENT = sys.argv[1]
+
     if URL_FROM_ARGUMENT.find("http") != -1:
         get_url([URL_FROM_ARGUMENT], harvest_urls)
         get_url(list_pictures_url, download_pictures)
