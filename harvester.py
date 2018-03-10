@@ -18,15 +18,10 @@ EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
 def harvest_urls(response, **kwargs):
     cvs_text = response.text
     line = cvs_text.split()
-    pic_seen = {}
     for pic_url in line[1:len(line)]:
         split_pic_url = pic_url.split(',')
         if len(split_pic_url) == 7:
-            if split_pic_url[6] in pic_seen:
-                continue
-
             list_pictures_url.append(split_pic_url[6])
-            pic_seen[split_pic_url[6]] = 1
 
 
 def save_pictures(name, response, url):
