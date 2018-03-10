@@ -21,7 +21,7 @@ def harvest_urls(response, **kwargs):
     line = cvs_text.split()
 
     for pic_url in line:
-        if'http' in pic_url:
+        if 'http' in pic_url:
             split_pic_url = pic_url.split(',')
             if len(split_pic_url) == 7:
                 if split_pic_url[6] not in list_pictures_url:
@@ -59,18 +59,6 @@ def save_html(html_output):
     del html_output
 
 
-def infinite_looper(objects):
-    count = 0
-    while True:
-        if count >= len(objects):
-            count = 0
-        message = yield objects[count]
-        if message is not None:
-            count = 0 if message < 0 else message
-        else:
-            count += 1
-
-
 def create_html(list_of_pic_urls):
 
     picture_extension = ".png"
@@ -80,12 +68,12 @@ def create_html(list_of_pic_urls):
         table.append("<td><img src='" + picture_name + picture_extension + "\'></td>")
 
     max_elements = len(table)
-    table_generator = infinite_looper(table)
+    
     html = "<table>\n"
     for i in range(0, max_elements, 4):
         html = html + "<tr>\n"
-        for _ in range(0, min(4, max_elements-i)):
-            html = html + table_generator.__next__() + "\n"
+        for j in range(0, min(4, max_elements-i)):
+            html = html + table[i+j] + "\n"
 
         html = html + "</tr>\n"
 
