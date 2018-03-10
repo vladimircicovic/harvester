@@ -41,7 +41,8 @@ def download_pictures(response, **kwargs):
         save_pictures(name, response, response.request.url)
     else:
         print("Could not save: ", name, ".png"
-              " - error with url: ", response.status_code)
+              " - error code:", response.status_code,
+              " http url: ", response.request.url)
 
 
 def create_list_of_names(list_urls, extension):
