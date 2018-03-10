@@ -20,16 +20,15 @@ def harvest_urls(response, **kwargs):
     cvs_text = response.text
     line = cvs_text.split()
 
-    for pic_url in line:
-        if 'http' in pic_url:
-            split_pic_url = pic_url.split(',')
-            if len(split_pic_url) == 7:
-                if split_pic_url[6] not in list_pictures_url:
-                    list_pictures_url.append(split_pic_url[6])
+    for pic_url in line[1:len(line)]:
+        split_pic_url = pic_url.split(',')
+        if len(split_pic_url) == 7:
+            if split_pic_url[6] not in list_pictures_url:
+                list_pictures_url.append(split_pic_url[6])
 
 
 def save_pictures(name, response, url):
-    filename_save_name = name + ".png"
+    filename_save_name = name
     with open(filename_save_name, 'wb') as out_file:
         shutil.copyfileobj(response.raw, out_file)
     del response
@@ -38,7 +37,7 @@ def save_pictures(name, response, url):
 def download_pictures(response, **kwargs):
     name = str(response.request.url).split("=")[1]
     if response.status_code == 200:
-        save_pictures(name, response, response.request.url)
+        save_pictures(name + ".png", response, response.request.url)
     else:
         print("Could not save: ", name, ".png"
               " - error code:", response.status_code,
@@ -68,7 +67,7 @@ def create_html(list_of_pic_urls):
         table.append("<td><img src='" + picture_name + picture_extension + "\'></td>")
 
     max_elements = len(table)
-    
+
     html = "<table>\n"
     for i in range(0, max_elements, 4):
         html = html + "<tr>\n"
