@@ -1,16 +1,20 @@
-import grequests
-import shutil
 import sys
+import shutil
+import grequests
 
-reqs = []
 list_pictures_url = []
 
-agent_win_os = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
-header = {'User-Agent': agent_win_os}
+MAX_PARALLEL_CONNECTIONS = 50
+AGENT_WIN_OS = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) '\
+               'Gecko/20100101 Firefox/52.0'
+HEADER = {'User-Agent': AGENT_WIN_OS}
+EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
+              'gsm-assessment-data/master/kafka.csv'
+
+# pylint: disable=missing-docstring,unused-argument
 
 
 def harvest_urls(response, **kwargs):
-    status_code = response.status_code
     cvs_text = response.text
     line = cvs_text.split()
 
@@ -31,31 +35,15 @@ def save_pictures(name, response, url):
         del response
 
 
-def rip_name_from_url(url_pic):
-
-    if url_pic.find("=") != -1:
-        return url_pic.split("=")[1]
-    else:
-        print("Url: " + url_pic + " is not valid !!! ")
-        exit(0)
-
-
 def download_pictures(response, **kwargs):
-    name = rip_name_from_url(response.request.url)
+    name = str(response.request.url).split("=")[1]
     save_pictures(name, response, response.request.url)
 
 
 def create_list_of_names(list_urls, extenstion):
-    list_names = []
     for url in list_urls:
-        list_names.append(rip_name_from_url(url) + extenstion)
-    return list_names
-
-
-def create_table(list_of_pic):
-
-    table = "\n".join('<td><img src=\''+pic+'\'></td>' for pic in list_of_pic)
-    return table
+        if '=' in url:
+            yield url.split("=")[1] + extenstion
 
 
 def save_html(html_output):
@@ -72,19 +60,19 @@ def infinite_looper(objects):
         if count >= len(objects):
             count = 0
         message = yield objects[count]
-        if message != None:
+        if message is not None:
             count = 0 if message < 0 else message
         else:
             count += 1
 
 
 def create_html(list_of_pic_urls):
-    list_of_names = []
     list_of_names = create_list_of_names(list_of_pic_urls, ".png")
 
     html = "<table>\n"
 
-    table_data = create_table(list_of_names)
+    table_data = "\n".join('<td><img src=\''+pic +
+                           '\'></td>' for pic in list_of_names)
     table = table_data.split('\n')
     max_elements = len(table)
     table_generator = infinite_looper(table)
@@ -107,27 +95,33 @@ def exception_handler(request, exception):
     sys.exit(-1)
 
 
-def get_url(url_list, function_operation):
-    for url in url_list:
-        reqs.append(grequests.get(url, proxies=None, headers=header,
-                                  allow_redirects=False, hooks={'response': function_operation}))
+def get_url(url_list, function):
+    request_links = []
+    for url_from_list in url_list:
+        request_links.append(grequests.get(url_from_list,
+                                           proxies=None,
+                                           headers=HEADER,
+                                           allow_redirects=False,
+                                           hooks={'response': function}))
 
-    grequests.map(reqs, exception_handler=exception_handler,
-                  size=50, gtimeout=5, stream=False)
+    grequests.map(request_links,
+                  exception_handler=exception_handler,
+                  size=MAX_PARALLEL_CONNECTIONS,
+                  gtimeout=5, stream=False)
 
 
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
         print("Usage: python ", sys.argv[0], " http[s]://URL_WITH_CSV")
-        print("Example:\n python " +
-              sys.argv[0], "https://raw.githubusercontent.com/bryangruneberg/gsm-assessment-data/master/kafka.csv")
+        print("Example:\n"
+              "       python", sys.argv[0], EXAMPLE_URL)
         sys.exit(0)
 
-    url = sys.argv[1]
-    if url.find("http") != -1:
-        get_url([url], harvest_urls)
+    URL_FROM_ARGUMENT = sys.argv[1]
+    if URL_FROM_ARGUMENT.find("http") != -1:
+        get_url([URL_FROM_ARGUMENT], harvest_urls)
         get_url(list_pictures_url, download_pictures)
         create_html(list_pictures_url)
     else:
-        print("Url does not contain http|https: " + url)
+        print("Url does not contain http|https: " + URL_FROM_ARGUMENT)
