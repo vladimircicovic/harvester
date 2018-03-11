@@ -44,7 +44,6 @@ def download_pictures(response, **kwargs):
               " http url: ", response.request.url)
 
 
-
 def create_list_of_names(list_urls):
     for url in list_urls:
         if '=' in url:
@@ -71,8 +70,9 @@ def create_html(list_of_pic_urls):
         html = html + "</tr>\n"
 
     html = html + "</table>\n"
-    save_file(OUTPUT_HTML, io.BytesIO(bytes(html, 'utf-8')))
-    print("File"+ OUTPUT_HTML +" saved !!")
+    html_byte = io.BytesIO(bytes(html, 'utf-8'))
+    save_file(OUTPUT_HTML, html_byte)
+    print("File", OUTPUT_HTML, " saved !!")
 
 
 def exception_handler(request, exception):
