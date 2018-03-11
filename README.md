@@ -1,3 +1,6 @@
+# Harvester
+![Harvester](https://github.com/vladimirc81/harvester/blob/master/snake.png?raw=true)
+
 ## How to run
 For running this app you need python3.5(minimum), pip and git.
 
