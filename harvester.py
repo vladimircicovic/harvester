@@ -1,11 +1,14 @@
 #!/usr/bin/env python3.6
+import io
 import sys
 import shutil
 import grequests
 
+
 list_pictures_url = []
 
 MAX_PARALLEL_CONNECTIONS = 50
+OUTPUT_HTML = "output.html"
 AGENT_WIN_OS = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) '\
                'Gecko/20100101 Firefox/52.0'
 HEADER = {'User-Agent': AGENT_WIN_OS}
@@ -18,41 +21,34 @@ EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
 def harvest_urls(response, **kwargs):
     cvs_text = response.text
     line = cvs_text.split()
+
     for pic_url in line[1:len(line)]:
         split_pic_url = pic_url.split(',')
         if len(split_pic_url) == 7:
             list_pictures_url.append(split_pic_url[6])
 
 
-def save_pictures(name, response, url):
-    filename_save_name = name
+def save_file(filename_save_name, data):
     with open(filename_save_name, 'wb') as out_file:
-        shutil.copyfileobj(response.raw, out_file)
-    del response
+        shutil.copyfileobj(data, out_file)
+    del data
 
 
 def download_pictures(response, **kwargs):
     name = str(response.request.url).split("=")[1]
     if response.status_code == 200:
-        save_pictures(name + ".png", response, response.request.url)
+        save_file(name + ".png", response.raw)
     else:
         print("Could not save: ", name, ".png"
               " - error code:", response.status_code,
               " http url: ", response.request.url)
 
 
+
 def create_list_of_names(list_urls):
     for url in list_urls:
         if '=' in url:
             yield url.split("=")[1]
-
-
-def save_html(html_output):
-    html_filename_save_name = "output.html"
-    with open(html_filename_save_name, 'w') as out_file:
-        out_file.write(html_output)
-    print("File " + html_filename_save_name + " saved !!")
-    del html_output
 
 
 def create_html(list_of_pic_urls):
@@ -75,7 +71,8 @@ def create_html(list_of_pic_urls):
         html = html + "</tr>\n"
 
     html = html + "</table>\n"
-    save_html(html)
+    save_file(OUTPUT_HTML, io.BytesIO(bytes(html, 'utf-8')))
+    print("File"+ OUTPUT_HTML +" saved !!")
 
 
 def exception_handler(request, exception):
