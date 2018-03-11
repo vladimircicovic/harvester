@@ -72,7 +72,7 @@ def create_html(list_of_pic_urls):
     html = html + "</table>\n"
     html_byte = io.BytesIO(bytes(html, 'utf-8'))
     save_file(OUTPUT_HTML, html_byte)
-    print("File", OUTPUT_HTML, " saved !!")
+    print("File", OUTPUT_HTML, "saved !!")
 
 
 def exception_handler(request, exception):
@@ -80,14 +80,14 @@ def exception_handler(request, exception):
     sys.exit(-1)
 
 
-def get_url(url_list, function):
+def get_url(url_list, function_ops):
     request_links = []
     for url_from_list in url_list:
         request_links.append(grequests.get(url_from_list,
                                            proxies=None,
                                            headers=HEADER,
                                            allow_redirects=False,
-                                           hooks={'response': function}))
+                                           hooks={'response': function_ops}))
 
     grequests.map(request_links,
                   exception_handler=exception_handler,
