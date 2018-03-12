@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.6
 import io
-import sys
 import shutil
-import grequests
+import sys
 
+import grequests
 
 list_pictures_url = []
 
@@ -18,7 +18,7 @@ EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
 # pylint: disable=missing-docstring,unused-argument
 
 
-def pic_url_generator(input_lines):
+def picture_names(input_lines):
     for pic_url in input_lines:
         split_pic_url = pic_url.split(',')
         if len(split_pic_url) == 7:
@@ -32,7 +32,7 @@ def harvest_urls(response, **kwargs):
     lines = cvs_text.split()
     no_header = lines[1:len(lines)]
 
-    for pic_url in pic_url_generator(no_header):
+    for pic_url in picture_names(no_header):
         list_pictures_url.append(pic_url)
 
 
@@ -43,16 +43,18 @@ def save_file(filename_save_name, data):
 
 
 def download_pictures(response, **kwargs):
-    name = str(response.request.url).split("=")[1]
+    name = str(response.request.url)
+    name = name.split("=")[1] + ".png"
+
     if response.status_code == 200:
-        save_file(name + ".png", response.raw)
+        save_file(name, response.raw)
     else:
-        print("Could not save: ", name, ".png"
+        print("Could not save: ", name,
               " - error code:", response.status_code,
               " http url: ", response.request.url)
 
 
-def create_list_of_names(list_urls):
+def create_names(list_urls):
     for url in list_urls:
         if '=' in url:
             yield url.split("=")[1]
@@ -60,12 +62,9 @@ def create_list_of_names(list_urls):
 
 def create_html(list_of_pic_urls):
 
-    picture_extension = ".png"
-
     table = []
-    for picture_name in create_list_of_names(list_of_pic_urls):
-        table.append("<td><img src='" + picture_name +
-                     picture_extension + "\'></td>")
+    for pic_name in create_names(list_of_pic_urls):
+        table.append("<td><img src='{0}.png'></td>".format(pic_name))
 
     max_elements = len(table)
 
