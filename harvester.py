@@ -18,14 +18,22 @@ EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
 # pylint: disable=missing-docstring,unused-argument
 
 
-def harvest_urls(response, **kwargs):
-    cvs_text = response.text
-    line = cvs_text.split()
-
-    for pic_url in line[1:len(line)]:
+def pic_url_generator(input_lines):
+    for pic_url in input_lines:
         split_pic_url = pic_url.split(',')
         if len(split_pic_url) == 7:
-            list_pictures_url.append(split_pic_url[6])
+            yield split_pic_url[6]
+        else:
+            continue
+
+
+def harvest_urls(response, **kwargs):
+    cvs_text = response.text
+    lines = cvs_text.split()
+    no_header = lines[1:len(lines)]
+
+    for pic_url in pic_url_generator(no_header):
+        list_pictures_url.append(pic_url)
 
 
 def save_file(filename_save_name, data):
