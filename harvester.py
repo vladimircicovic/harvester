@@ -9,9 +9,7 @@ list_pictures_url = []
 
 MAX_PARALLEL_CONNECTIONS = 50
 OUTPUT_HTML = "output.html"
-AGENT_WIN_OS = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) '\
-               'Gecko/20100101 Firefox/52.0'
-HEADER = {'User-Agent': AGENT_WIN_OS}
+
 EXAMPLE_URL = 'https://raw.githubusercontent.com/bryangruneberg/' \
               'gsm-assessment-data/master/kafka.csv'
 
@@ -92,7 +90,7 @@ def get_url(url_list, function_ops):
     for url_from_list in url_list:
         request_links.append(grequests.get(url_from_list,
                                            proxies=None,
-                                           headers=HEADER,
+                                           headers=None,
                                            allow_redirects=False,
                                            hooks={'response': function_ops}))
 
