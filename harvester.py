@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-url", nargs=1, help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
+        "-url","-u", nargs=1, help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
     args = parser.parse_args()
 
     if len(sys.argv) > 2:
