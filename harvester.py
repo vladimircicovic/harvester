@@ -2,7 +2,7 @@
 import io
 import shutil
 import sys
-
+import argparse
 import grequests
 
 list_pictures_url = []
@@ -102,13 +102,16 @@ def get_url(url_list, function_ops):
 
 if __name__ == '__main__':
 
-    if len(sys.argv) < 2:
-        print("Usage: python ", sys.argv[0], " http[s]://URL_WITH_CSV")
-        print("Example:\n"
-              "       python", sys.argv[0], EXAMPLE_URL)
-        sys.exit(0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-url", nargs=1, help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
+    args = parser.parse_args()
 
-    URL_FROM_ARGUMENT = sys.argv[1]
+    if len(sys.argv) > 2:
+        URL_FROM_ARGUMENT = args.url[0]
+    else:
+        print("python", sys.argv[0], "[-h|--help]")
+        sys.exit(-1)
 
     if URL_FROM_ARGUMENT.find("http") != -1:
         get_url([URL_FROM_ARGUMENT], harvest_urls)
