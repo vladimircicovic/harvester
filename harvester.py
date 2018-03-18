@@ -106,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-url","-u", nargs="+", help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
     args = parser.parse_args()
-    if len(args.url) == 0:
+    if not args.url:
         print("at least one url required")
         parser.print_help()
         sys.exit(8)
