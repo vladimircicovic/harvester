@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 Run app with:
 ```
-pythone harvester.py  https://some/urls/txt.cvs
+python3 harvester.py  https://some/urls/txt.cvs
 ```
 
 If everthing goes ok there would be bunch of png files with one output.html.

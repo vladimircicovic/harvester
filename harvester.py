@@ -102,20 +102,18 @@ def get_url(url_list, function_ops):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument(
-        "-url","-u", nargs=1, help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
+        "-url","-u", nargs="+", help="Url where is CSV file\npython " + sys.argv[0] + " " + EXAMPLE_URL)
     args = parser.parse_args()
-
-    if len(sys.argv) > 2:
-        URL_FROM_ARGUMENT = args.url[0]
-    else:
-        print("python", sys.argv[0], "[-h|--help]")
-        sys.exit(-1)
-
-    if URL_FROM_ARGUMENT.find("http") != -1:
-        get_url([URL_FROM_ARGUMENT], harvest_urls)
-        get_url(list_pictures_url, download_pictures)
-        create_html(list_pictures_url)
-    else:
-        print("Url does not contain http|https: " + URL_FROM_ARGUMENT)
+    if len(args.url) == 0:
+        print("at least one url required")
+        parser.print_help()
+        sys.exit(8)
+    for url in args.url:
+        if not (url.startswith("http://") or url.startswith("https://")):
+            print("Url does not start with http://|https:// %s" % url)
+            sys.exit(8)
+    get_url(args.url, harvest_urls)
+    get_url(list_pictures_url, download_pictures)
+    create_html(list_pictures_url)
