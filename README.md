@@ -29,3 +29,5 @@ This simple version missing:
 - directory output
 - verification for files (size, name, format png and html)
 
+
+Author: Vladimir Cicovic
