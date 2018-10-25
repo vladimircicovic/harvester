@@ -31,4 +31,4 @@ This simple version missing:
 
 
 Author: Vladimir Cicovic
-Author: :P
+Author: :-|
