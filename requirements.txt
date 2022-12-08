@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file requirments.txt requirments.txt
 #
-certifi==2018.1.18        # via requests
+certifi==2022.12.7        # via requests
 chardet==3.0.4            # via requests
 gevent==1.2.2             # via grequests
 greenlet==0.4.13          # via gevent
